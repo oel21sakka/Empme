@@ -1,0 +1,39 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+{% load static %}
+<script src="{% static 'get_departments.js' %}"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#id_company').change(function() {
+            var company_id = $(this).val();
+            getDepartmentsForCompany(company_id);
+        });
+    });
+</script>
+
+
+<h1>Employee Detail</h1>
+<p>First Name: {{ employee.first_name }}</p>
+<p>Last Name: {{ employee.last_name }}</p>
+<p>Username: {{ employee.username }}</p>
+<p>Email: {{ employee.email }}</p>
+<p>Company: {{ employee.company }}</p>
+<p>Department: {{ employee.department }}</p>
+<p>Position: {{ employee.position }}</p>
+
+<!-- Update Form -->
+<h2>Update Employee</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update</button>
+</form>
+
+<!-- Delete Button -->
+<h2>Delete Employee</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="delete">
+    <button type="submit">Delete</button>
+</form>

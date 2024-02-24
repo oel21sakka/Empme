@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .forms import CompanyForm, DepartmentForm
 from .models import Company, Department
@@ -84,3 +85,14 @@ def update_department(request, department_id):
     else:
         form = DepartmentForm(instance=department)
     return render(request, 'department_form.html', {'form': form})
+
+def get_departments(request):
+    company_id = request.GET.get('company_id')
+    
+    try:
+        company = Company.objects.get(id=company_id)
+        departments = Department.objects.filter(company=company)
+        data = [{'id': department.id, 'name': department.name} for department in departments]
+        return JsonResponse({'departments': data})
+    except:
+        return JsonResponse({'departments': []})
