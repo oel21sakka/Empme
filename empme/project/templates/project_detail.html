@@ -1,0 +1,54 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+{% load static %}
+<script src="{% static 'get_departments.js' %}"></script>
+<script src="{% static 'get_employees.js' %}"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#id_company').change(function() {
+            var company_id = $(this).val();
+            getDepartmentsForCompany(company_id);
+            getEmployeesForCompany(company_id);
+        });
+    });
+</script>
+
+
+<!-- project_detail.html -->
+
+<h1>Project Detail</h1>
+<p>Name: {{ project.name }}</p>
+<p>Description: {{ project.description }}</p>
+<p>Start Date: {{ project.start_date }}</p>
+<p>End Date: {{ project.end_date }}</p>
+<p>Company: {{ project.company }}</p>
+<p>Department: {{ project.department }}</p>
+<p>Assigned Employees:</p>
+<ul>
+    {% for employee in project.assigned_employees.all %}
+        <li>{{ employee }}</li>
+    {% endfor %}
+</ul>
+
+<!-- Update Form -->
+<h2>Update Project</h2>
+<form method="post">
+    {% csrf_token %}
+    <p><label for="id_name">Name:</label> {{ form.name }}</p>
+    <p><label for="id_description">Description:</label> {{ form.description }}</p>
+    <p><label for="id_start_date">Start Date:</label> {{ form.start_date }}</p>
+    <p><label for="id_end_date">End Date:</label> {{ form.end_date }}</p>
+    <p><label for="id_company">Company:</label> {{ form.company }}</p>
+    <p><label for="id_department">Department:</label> {{ form.department }}</p>
+    <p><label for="id_assigned_employees">Assigned Employees:</label> {{ form.assigned_employees }}</p>
+    <button type="submit">Update</button>
+</form>
+
+<!-- Delete Button -->
+<h2>Delete Project</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="delete">
+    <button type="submit">Delete</button>
+</form>

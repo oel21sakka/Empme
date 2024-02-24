@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .forms import CompanyForm, DepartmentForm
 from .models import Company, Department
+from employee.models import Employee
 
 def create_company(request):
     if request.method == 'POST':
@@ -96,3 +97,14 @@ def get_departments(request):
         return JsonResponse({'departments': data})
     except:
         return JsonResponse({'departments': []})
+
+def get_employees(request):
+    company_id = request.GET.get('company_id')
+    
+    try:
+        company = Company.objects.get(id=company_id)
+        employees = Employee.objects.filter(company=company)
+        data = [{'id': employee.id, 'name': str(employee)} for employee in employees]
+        return JsonResponse({'employees': data})
+    except:
+        return JsonResponse({'employees': []})

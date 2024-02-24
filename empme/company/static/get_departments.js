@@ -5,7 +5,6 @@ function getDepartmentsForCompany(company_id) {
         dataType: 'json',
         success: function (data) {
             var departments = data.departments;
-            console.log(data)
             var departmentField = $('#id_department');
             departmentField.empty();
             $.each(departments, function (index, department) {
