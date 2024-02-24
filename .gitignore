@@ -4,3 +4,4 @@ venv
 .env
 commit_message.txt
 further_work.txt
+db.sqlite3

@@ -1,0 +1,6 @@
+<h1>Department List</h1>
+<ul>
+{% for department in departments %}
+    <li><a href="{% url 'department_detail' department.id %}">{{ department }}</a></li>
+{% endfor %}
+</ul>
