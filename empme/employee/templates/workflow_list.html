@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Workflow List</h1>
+    <ul>
+        {% for workflow in workflows %}
+            <li><a href="{% url 'workflow_detail' workflow.id %}">{{ workflow.employee }} : {{ workflow }}</a></li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

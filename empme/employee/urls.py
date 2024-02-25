@@ -8,4 +8,6 @@ urlpatterns = [
     path('<int:employee_id>/', views.employee_detail, name='employee_detail'),
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('workflows/', views.workflow_list, name='workflow_list'),
+    path('workflows/<int:workflow_id>/', views.workflow_detail, name='workflow_detail'),
 ]

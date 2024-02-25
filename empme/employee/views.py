@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
-from .forms import EmployeeRegistrationForm, EmployeeUpdateForm
-from .models import Employee
+from .forms import EmployeeRegistrationForm, EmployeeUpdateForm, WorkFlowForm
+from .models import Employee, Workflow
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 
@@ -65,3 +65,34 @@ def employee_register(request):
     else:
         form = EmployeeRegistrationForm()
     return render(request, 'employee_register.html', {'form': form})
+
+@login_required
+def workflow_list(request):
+    if request.user.is_superuser:
+        workflows = Workflow.objects.all()
+    elif request.user.company and request.user.is_company(request.user.company.id):
+        employees = Employee.objects.filter(company=request.user.company)
+        workflows = Workflow.objects.filter(employee__in=employees)
+        print(employees)
+    else:
+        workflows = Workflow.objects.filter(employee=request.user)
+    print(workflows)
+    return render(request, 'workflow_list.html', {'workflows': workflows})
+
+@login_required
+def workflow_detail(request, workflow_id):
+    workflow = get_object_or_404(Workflow, id=workflow_id)
+    
+    if not (request.user.is_superuser==True or request.user == workflow.employee
+            or request.user.is_company(workflow.company.id)):
+        return HttpResponseForbidden("You don't have permission to access this page.")
+    
+    if request.method == 'POST':
+        form = WorkFlowForm(request.POST, instance=workflow)
+        if form.is_valid():
+            form.save()
+            return redirect('workflow_list')
+    else:
+        form = WorkFlowForm(instance=workflow)
+    
+    return render(request, 'workflow_detail.html', {'form': form, 'workflow': workflow})

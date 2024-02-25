@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Workflow Detail</h1>
+<p>Workflow ID: {{ workflow.id }}</p>
+<p>Employee: {{ workflow.employee }}</p>
+<p>Company: {{ workflow.company }}</p>
+<p>Date: {{ workflow.date }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update</button>
+</form>
+
+{% endblock %}

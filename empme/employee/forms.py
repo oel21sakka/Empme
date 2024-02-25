@@ -1,12 +1,12 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Employee
+from .models import Employee, Workflow
 
 class EmployeeRegistrationForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = Employee
-        fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2')
+        fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2', 'company')
 
 class EmployeeUpdateForm(forms.ModelForm):
     class Meta:
@@ -20,3 +20,8 @@ class EmployeeUpdateForm(forms.ModelForm):
         if company and department and department.company != company:
             raise forms.ValidationError("Selected department does not belong to the selected company.")
         return cleaned_data
+
+class WorkFlowForm(forms.ModelForm):
+    class Meta:
+        model = Workflow
+        fields = ['status']
