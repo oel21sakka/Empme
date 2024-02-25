@@ -4,6 +4,7 @@ class Company(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
     class Meta:
+        verbose_name_plural = "companies"
         indexes = [
             models.Index(fields=['name'])
         ]

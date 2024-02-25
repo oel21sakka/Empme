@@ -10,13 +10,10 @@ class Employee(AbstractUser):
     email = models.EmailField()
 
     def is_company(self, company_id):
-        return self.is_superuser == True or (self.company.id==company_id and self.is_staff)
+        return self.is_superuser == True or (self.company and self.company.id==company_id and self.is_staff)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}' if self.first_name or self.last_name else 'N/A'
-
-from datetime import datetime
-from django.db import models
 
 class Workflow(models.Model):
     STATUS_CHOICES = [
