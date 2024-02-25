@@ -1,10 +1,15 @@
-from django.http import JsonResponse
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .forms import CompanyForm, DepartmentForm
 from .models import Company, Department
 from employee.models import Employee
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def create_company(request):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("You don't have permission to access this page.")
     if request.method == 'POST':
         form = CompanyForm(request.POST)
         if form.is_valid():
@@ -14,14 +19,31 @@ def create_company(request):
         form = CompanyForm()
     return render(request, 'company_form.html', {'form': form})
 
+@login_required
 def company_list(request):
-    companies = Company.objects.all()
+    company_list = Company.objects.all()
+    paginator = Paginator(company_list, 10)
+
+    page = request.GET.get('page')
+    try:
+        companies = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        companies = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range deliver last page of results.
+        companies = paginator.page(paginator.num_pages)
+
     return render(request, 'company_list.html', {'companies': companies})
 
+@login_required
 def company_detail(request, company_name):
     company = get_object_or_404(Company, name=company_name)
     
     if request.method == 'POST':
+        if not request.user.is_staff or not request.user.is_company(company.id):
+            return HttpResponseForbidden("You don't have permission to access this page.")
+
         # Check if the request is for updating the company details
         if 'update_company' in request.POST:
             company_form = CompanyForm(request.POST, instance=company)
@@ -55,18 +77,25 @@ def company_detail(request, company_name):
         department_form = DepartmentForm()
     
     departments = company.departments.all()
+    employees = company.employees.all()
     
     context = {
         'company': company,
         'company_form': company_form,
         'department_form': department_form,
         'departments': departments,
+        'employees': employees,
     }
-
     return render(request, 'company_detail.html', context)
 
+@login_required
 def update_company(request, company_name):
+
     company = get_object_or_404(Company, name=company_name)
+    
+    if not request.user.is_company(company.id):
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
     if request.method == 'POST':
         form = CompanyForm(request.POST, instance=company)
         if form.is_valid():
@@ -76,8 +105,13 @@ def update_company(request, company_name):
         form = CompanyForm(instance=company)
     return render(request, 'company_form.html', {'form': form})
 
+@login_required
 def update_department(request, department_id):
     department = get_object_or_404(Department, id=department_id)
+    
+    if not request.user.is_company(department.company.id):
+            return HttpResponseForbidden("You don't have permission to access this page.")
+    
     if request.method == 'POST':
         form = DepartmentForm(request.POST, instance=department)
         if form.is_valid():

@@ -1,7 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
 <h1>Project List</h1>
-<ul>
-{% for project in projects %}
-    <li><a href="{% url 'project_detail' project.id %}">{{ project }}</a></li>
-{% endfor %}
-</ul>
+
 <a href="{% url 'project_create'%}">Create Project</a>
+
+{% if projects %}
+    <ul>
+        {% for project in projects %}
+            <li><a href="{% url 'project_detail' project.id %}">{{ project }}</a></li>
+        {% endfor %}
+    </ul>
+    <div class="pagination">
+        <span class="step-links">
+            {% if projects.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ projects.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ projects.number }} of {{ projects.paginator.num_pages }}.
+            </span>
+
+            {% if projects.has_next %}
+                <a href="?page={{ projects.next_page_number }}">next</a>
+                <a href="?page={{ projects.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% else %}
+    <p>No projects found.</p>
+{% endif %}
+
+{% endblock %}

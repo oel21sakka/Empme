@@ -1,5 +1,10 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% extends 'base.html' %}
 
+{% block content %}
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% load custom_filters %}
 {% load static %}
 <script src="{% static 'get_departments.js' %}"></script>
 
@@ -22,18 +27,23 @@
 <p>Department: {{ employee.department }}</p>
 <p>Position: {{ employee.position }}</p>
 
-<!-- Update Form -->
-<h2>Update Employee</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Update</button>
-</form>
+{% if request.user.id == employee.id or request.user.is_superuser or request.user|is_company:employee.company.id %}
 
-<!-- Delete Button -->
-<h2>Delete Employee</h2>
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="delete">
-    <button type="submit">Delete</button>
-</form>
+    <!-- Update Form -->
+    <h2>Update Employee</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update</button>
+    </form>
+
+    <!-- Delete Button -->
+    <h2>Delete Employee</h2>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="delete">
+        <button type="submit">Delete</button>
+    </form>
+{% endif %}
+
+{% endblock %}

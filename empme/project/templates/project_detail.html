@@ -1,5 +1,10 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% extends 'base.html' %}
 
+{% block content %}
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% load custom_filters %}
 {% load static %}
 <script src="{% static 'get_departments.js' %}"></script>
 <script src="{% static 'get_employees.js' %}"></script>
@@ -31,24 +36,28 @@
     {% endfor %}
 </ul>
 
-<!-- Update Form -->
-<h2>Update Project</h2>
-<form method="post">
-    {% csrf_token %}
-    <p><label for="id_name">Name:</label> {{ form.name }}</p>
-    <p><label for="id_description">Description:</label> {{ form.description }}</p>
-    <p><label for="id_start_date">Start Date:</label> {{ form.start_date }}</p>
-    <p><label for="id_end_date">End Date:</label> {{ form.end_date }}</p>
-    <p><label for="id_company">Company:</label> {{ form.company }}</p>
-    <p><label for="id_department">Department:</label> {{ form.department }}</p>
-    <p><label for="id_assigned_employees">Assigned Employees:</label> {{ form.assigned_employees }}</p>
-    <button type="submit">Update</button>
-</form>
+{% if request.user.is_superuser or request.user|is_company:project.company.id %}
+    <!-- Update Form -->
+    <h2>Update Project</h2>
+    <form method="post">
+        {% csrf_token %}
+        <p><label for="id_name">Name:</label> {{ form.name }}</p>
+        <p><label for="id_description">Description:</label> {{ form.description }}</p>
+        <p><label for="id_start_date">Start Date:</label> {{ form.start_date }}</p>
+        <p><label for="id_end_date">End Date:</label> {{ form.end_date }}</p>
+        <p><label for="id_company">Company:</label> {{ form.company }}</p>
+        <p><label for="id_department">Department:</label> {{ form.department }}</p>
+        <p><label for="id_assigned_employees">Assigned Employees:</label> {{ form.assigned_employees }}</p>
+        <button type="submit">Update</button>
+    </form>
 
-<!-- Delete Button -->
-<h2>Delete Project</h2>
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="delete">
-    <button type="submit">Delete</button>
-</form>
+    <!-- Delete Button -->
+    <h2>Delete Project</h2>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="delete">
+        <button type="submit">Delete</button>
+    </form>
+{% endif %}
+
+{% endblock %}

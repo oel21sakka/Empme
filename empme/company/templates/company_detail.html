@@ -1,31 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
 <!-- company_detail.html -->
+{% load custom_filters %}
+
+
 
 <h1>{{ company }}</h1>
 <form method="post">
-    {% csrf_token %}
-    <a href="{% url 'update_company' company_name=company.name %}">Update Company</a>
-    <input type="submit" name="delete_company" value="Delete Company">
+    {% if request.user|is_company:company.id %}
+        {% csrf_token %}
+        <a href="{% url 'update_company' company_name=company.name %}">Update Company</a>
+        <input type="submit" name="delete_company" value="Delete Company">
+    {% endif %}
 </form>
 
 <h2>Departments</h2>
 <ul>
 {% for department in departments %}
     <li>{{ department }}</li>
-    <!-- Add links/buttons for updating and deleting departments -->
-    <a href="{% url 'update_department' department.id %}">Update</a>
-    <form action="" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="delete_department" value="{{ department.id }}">
-        <input type="submit" value="Delete">
-    </form>
+    {% if request.user|is_company:company.id %}
+        <!-- Add links/buttons for updating and deleting departments -->
+        <a href="{% url 'update_department' department.id %}">Update</a>
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="delete_department" value="{{ department.id }}">
+            <input type="submit" value="Delete">
+        </form>
+    {% endif %}
 {% endfor %}
 </ul>
 
-<!-- Add a form for creating new departments -->
-<h2>Add Department</h2>
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="company_id" value="{{ company.id }}">
-    {{ department_form.as_p }}
-    <button type="submit" name="create_department">Save Department</button>
-</form>
+{% if request.user|is_company:company.id %}
+    <!-- Add a form for creating new departments -->
+    <h2>Add Department</h2>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="company_id" value="{{ company.id }}">
+        {{ department_form.as_p }}
+        <button type="submit" name="create_department">Save Department</button>
+    </form>
+{% endif %}
+
+
+<h2>Employees</h2>
+<ul>
+{% for employee in employees %}
+    <li><a href="{% url 'employee_detail' employee.id %}">{{ employee }}  -  {{ employee.email }}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

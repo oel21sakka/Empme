@@ -1,7 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
 <h1>Employee List</h1>
-<ul>
-    {% for employee in employees %}
-        <li><a href="{% url 'employee_detail' employee.id %}">{{ employee }}  -  {{ employee.email }}</a></li>
-    {% endfor %}
-</ul>
 <a href="{% url 'employee_register'%}">Register Employee</a>
+
+{% if employees %}
+    <ul>
+        {% for employee in employees %}
+            <li><a href="{% url 'employee_detail' employee.id %}">{{ employee }}  -  {{ employee.email }}</a></li>
+        {% endfor %}
+    </ul>
+    <div class="pagination">
+        <span class="step-links">
+            {% if employees.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ employees.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ employees.number }} of {{ employees.paginator.num_pages }}.
+            </span>
+
+            {% if employees.has_next %}
+                <a href="?page={{ employees.next_page_number }}">next</a>
+                <a href="?page={{ employees.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% else %}
+    <p>No employees found.</p>
+{% endif %}
+
+{% endblock %}
