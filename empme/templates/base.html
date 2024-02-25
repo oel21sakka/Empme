@@ -12,7 +12,10 @@
             <li><a href="{% url 'employee_list' %}">Employees</a></li>
             <li><a href="{% url 'project_list' %}">Projects</a></li>
             <li><a href="{% url 'workflow_list' %}">WorkFlows</a></li>
-            <li><a href="{% url 'logout' %}">Logout</a></li>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
         </ul>
     </nav>
     <main>

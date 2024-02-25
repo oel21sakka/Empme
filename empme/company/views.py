@@ -41,7 +41,7 @@ def company_detail(request, company_name):
     company = get_object_or_404(Company, name=company_name)
     
     if request.method == 'POST':
-        if not request.user.is_staff or not request.user.is_company(company.id):
+        if not request.user.is_superuser and not request.user.is_company(company.id):
             return HttpResponseForbidden("You don't have permission to access this page.")
 
         # Check if the request is for updating the company details

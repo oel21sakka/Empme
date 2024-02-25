@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import  HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render, redirect
 from .forms import ProjectForm
 from .models import Project
